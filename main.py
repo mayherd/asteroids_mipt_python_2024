@@ -98,7 +98,7 @@ class Nature:
             self.asteroids.pop(self.asteroids.index(asteroid))
             self.l_aster -= 1
             if asteroid.width < 40 and asteroid.height < 40:
-                return
+                continue
             v_rx, v_ry = random.uniform(-1, 1), random.uniform(-1, 1)
             if v_rx == 0 or v_ry == 0:
                 v_rx += 0.12
@@ -110,8 +110,8 @@ class Nature:
                 v_rx += 0.12
                 v_ry += 0.12
             v_rx, v_ry = v_rx / math.sqrt(v_rx ** 2 + v_ry ** 2), v_ry / math.sqrt(v_rx ** 2 + v_ry ** 2)
-            self.asteroids.append(Asteroid(p_x + 10, p_y + 10, v_rx, v_ry, width=15, height=15))
-            self.l_aster += 1
+            self.asteroids.append(Asteroid(p_x + 10, p_y + 10,  v_rx, v_ry, width=15, height=15))
+            self.l_aster += 2
 
     def make_saucers(self):
         return
