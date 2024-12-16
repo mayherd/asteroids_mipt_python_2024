@@ -3,10 +3,27 @@ import numpy as np
 from pygame import SurfaceType
 
 
-class MovingObject:
-    def __init__(self, x: float, y: float, v_x: float, v_y: float, speed : float):
+class RectangularObject:
+    def __init__(self, x: float, y: float, width: int, height: int):
         self.x = x
         self.y = y
+        self.width = width
+        self.height = height
+
+def collided (t1: RectangularObject, t2: RectangularObject):
+    if t2.x <= t1.x <= t2.x + t2.width and t2.y <= t1.y <= t2.y + t2.height:
+        return True
+    if t2.x <= t1.x + t1.width <= t2.x + t2.width and t2.y <= t1.y <= t2.y + t2.height:
+        return True
+    if t2.x <= t1.x <= t2.x + t2.width and t2.y <= t1.y + t1.height <= t2.y + t2.height:
+        return True
+    if t2.x <= t1.x + t1.width <= t2.x + t2.width and t2.y <= t1.y  + t1.height <= t2.y + t2.height:
+        return True
+    return False
+
+class MovingObject(RectangularObject):
+    def __init__(self, x: float, y: float, v_x: float, v_y: float, width: int, height: int, speed : float):
+        RectangularObject.__init__(self, x, y, width, height)
         self.v_x = v_x
         self.v_y = v_y
         self.speed = speed
@@ -19,19 +36,18 @@ class MovingObject:
 
 class Projectile(MovingObject):
     def __init__(self, x: float, y: float, v_x: float, v_y: float):
-        MovingObject.__init__(self, x, y, v_x, v_y, speed = 10)
-        self.width = 7
-        self.height = 7
+        MovingObject.__init__(self, x, y, v_x, v_y, 7, 7, speed = 10)
+
 
 
 class Asteroid(MovingObject):
     def __init__(self, x: float, y: float, v_x: float, v_y: float, width: int = 40, height: int = 40, speed: int = 5):
-        MovingObject.__init__(self, x, y, v_x, v_y, speed)
-        self.width = width
-        self.height = height
+        MovingObject.__init__(self, x, y, v_x, v_y, width, height, speed)
     #determines if asteroid will enter the surf
     def check_coll_with_surf(self, surf: SurfaceType):
         dims = surf.get_size()
+        if -100 < self.x < dims[0] + 100 and -100 < self.y < dims[1] + 100:
+            return True
         sols = []
         a13 = np.array([[dims[0], -1 * self.v_x], [0, -1 * self.v_y]])
         b12 = np.array([self.x, self.y])
@@ -43,7 +59,7 @@ class Asteroid(MovingObject):
         b4 = np.array([self.x - dims[0], self.y])
         sols.append(np.linalg.solve(a24, b4))
         for sol in sols:
-            if sol[0] < 0 or sol[0] > 1 or sol[1] < 0:
+            if 0 <= sol[0] <= 1 and sol[1] >= 0:
                 return True
         return False
 
@@ -56,6 +72,7 @@ class Nature:
         self.timer = now
         self.bullets = []
         self.l_bullets = 0
+        self.points = 0
     def make_asteroid(self, surf: SurfaceType):
         if pygame.time.get_ticks() - self.timer < 150:
             return
@@ -84,12 +101,14 @@ class Nature:
     #destroy asteroids and bullets that collided with each other
     def destroy_asteroids(self):
         bullets_destroyed = []
-        asteroids_destroyed =[]
+        asteroids_destroyed = []
         for i in range (self.l_bullets):
             for j in range (self.l_aster):
-                if self.asteroids[j].x <= self.bullets[i].x <= self.asteroids[j].x + self.asteroids[j].width and self.asteroids[j].y <= self.bullets[i].y <= self.asteroids[j].y + self.asteroids[j].height:
+                if collided(self.bullets[i], self.asteroids[j]):
                     bullets_destroyed.append(self.bullets[i])
                     asteroids_destroyed.append(self.asteroids[j])
+                    self.points += 1
+                    break
         for bullet in bullets_destroyed:
             self.bullets.pop(self.bullets.index(bullet))
             self.l_bullets -= 1
@@ -119,10 +138,14 @@ class Nature:
         return
 
     def draw(self, surf: SurfaceType):
+        myfont = pygame.font.SysFont("Times New Roman", 18)
+        score = myfont.render(str(self.points), 1, pygame.color.THECOLORS["white"])
+        surf.blit(score, (20, 480))
         for asteroid in self.asteroids:
             pygame.draw.rect(surf, pygame.color.THECOLORS['green'], (asteroid.x, asteroid.y, asteroid.width, asteroid.height))
         for bullet in self.bullets:
             pygame.draw.rect(surf, pygame.color.THECOLORS['orange'], (bullet.x, bullet.y, bullet.width, bullet.height))
+
     def update(self, surf: SurfaceType):
         self.make_asteroid(surf)
         for i in range (self.l_aster):
@@ -134,24 +157,35 @@ class Nature:
         self.delete_asteroids_outside(surf)
         self.destroy_asteroids()
 
-class Player:
+class Player(RectangularObject):
     def __init__(self, x: float, y: float, now: int, width: int = 25, height: int = 25):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+        RectangularObject.__init__(self, x, y, width, height)
         self.vel = 5
-
         self.timer = now
-    def update_pos(self, keys_pressed):
+        self.inv_frames = 0
+
+    def update_pos(self, keys_pressed, surf: SurfaceType):
+        dims = surf.get_size()
         if keys_pressed[pygame.K_a]:
-            self.x -= self.vel
+            if self.x > 10:
+                self.x -= self.vel
         if keys_pressed[pygame.K_d]:
-            self.x += self.vel
+            if self.x < dims[0] - 10 - self.width:
+                self.x += self.vel
         if keys_pressed[pygame.K_s]:
-            self.y += self.vel
+            if self.y < dims[1] - 10 - self.height:
+                self.y += self.vel
         if keys_pressed[pygame.K_w]:
-            self.y -= self.vel
+            if self.y > 10:
+                self.y -= self.vel
+
+    def check_collision(self, rects: list[RectangularObject]):
+        for rect in rects:
+            if collided(self, rect) and self.inv_frames == 0:
+                self.inv_frames = 110
+
+
+
     def shoot(self, keys_pressed, nature: Nature):
         if pygame.time.get_ticks() - self.timer < 200:
             return
@@ -166,20 +200,26 @@ class Player:
         if keys_pressed[pygame.K_RIGHT]:
             v_x += 1
         if v_x != 0 or v_y != 0:
-            nature.bullets.append(Projectile(self.x, self.y, v_x, v_y))
+            nature.bullets.append(Projectile(self.x + self.width / 2, self.y + self.height / 2, v_x, v_y))
             nature.l_bullets += 1
             self.timer = pygame.time.get_ticks()
     def draw(self, surf: SurfaceType):
-        pygame.draw.rect(surf, pygame.color.THECOLORS['red'], (self.x, self.y, self.width, self.height))
-    def update(self, keys_pressed, nature: Nature):
+        if (self.inv_frames // 10) % 2 == 0:
+            pygame.draw.rect(surf, pygame.color.THECOLORS['red'], (self.x, self.y, self.width, self.height))
+            if self.inv_frames > 0:
+                self.inv_frames -= 1
+        else:
+            self.inv_frames -= 1
+    def update(self, keys_pressed, nature: Nature, surf: SurfaceType):
         self.shoot(keys_pressed, nature)
-        self.update_pos(keys_pressed)
+        self.update_pos(keys_pressed, surf)
+        self.check_collision(nature.asteroids)
 
 
 def redraw_game_window(surf, player: Player, nature: Nature):
     surf.fill((0,0,0))
-    player.draw(surf)
     nature.draw(surf)
+    player.draw(surf)
     pygame.display.update()
 
 if __name__ == '__main__':
@@ -199,6 +239,6 @@ if __name__ == '__main__':
                 pygame.quit()
                 sys.exit()
         keys = pygame.key.get_pressed()
-        player.update(keys, nature)
+        player.update(keys, nature, screen)
         nature.update(screen)
         redraw_game_window(screen, player, nature)
