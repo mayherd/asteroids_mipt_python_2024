@@ -144,10 +144,6 @@ class Nature:
             self.asteroids.append(Asteroid(p_x + 10, p_y + 10,  v_rx, v_ry, "medium", random.choice([0, 1, 2]), width=25, height=25))
             self.l_aster += 2
 
-    def make_saucers(self):
-        return
-    def delete_saucer(self):
-        return
 
     def draw(self, surf: SurfaceType):
 
