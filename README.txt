@@ -1,2 +1,2 @@
 A take on arcade classic - "Asteroids".
-"ESC" to exit.
+"WASD" to move, arrows to shoot, "ESC" to exit.
