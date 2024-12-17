@@ -78,11 +78,11 @@ class Nature:
         self.l_bullets = 0
         self.points = 0
         self.bullet_sprite = pygame.image.load("misc/bullet.png")
-        self.las = [pygame.image.load("misc/large1.png"), pygame.image.load("misc/large2.png"), pygame.image.load("misc/large3.png")]
-        self.mas = [pygame.image.load("misc/medium1.png"), pygame.image.load("misc/medium2.png"),
+        las = [pygame.image.load("misc/large1.png"), pygame.image.load("misc/large2.png"), pygame.image.load("misc/large3.png")]
+        mas = [pygame.image.load("misc/medium1.png"), pygame.image.load("misc/medium2.png"),
                                        pygame.image.load("misc/medium3.png")]
-        self.large_asteroid_sprites = [[pygame.transform.rotate(self.las[i], j * 2) for j in range (180)] for i in range (3)]
-        self.medium_asteroid_sprites = [[pygame.transform.rotate(self.mas[i], j * 2) for j in range (180)] for i in range (3)]
+        self.large_asteroid_sprites = [[pygame.transform.rotate(las[i], j * 2) for j in range (180)] for i in range (3)]
+        self.medium_asteroid_sprites = [[pygame.transform.rotate(mas[i], j * 2) for j in range (180)] for i in range (3)]
         self.asteroid_delay = 130.0
     def make_asteroid(self, surf: SurfaceType):
         if pygame.time.get_ticks() - self.timer < self.asteroid_delay:
