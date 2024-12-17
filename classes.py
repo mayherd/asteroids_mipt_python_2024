@@ -83,7 +83,7 @@ class Nature:
                                        pygame.image.load("misc/medium3.png")]
         self.large_asteroid_sprites = [[pygame.transform.rotate(self.las[i], j * 2) for j in range (180)] for i in range (3)]
         self.medium_asteroid_sprites = [[pygame.transform.rotate(self.mas[i], j * 2) for j in range (180)] for i in range (3)]
-        self.asteroid_delay = 150.0
+        self.asteroid_delay = 130.0
     def make_asteroid(self, surf: SurfaceType):
         if pygame.time.get_ticks() - self.timer < self.asteroid_delay:
             return
@@ -98,8 +98,8 @@ class Nature:
             v_rx += 0.12
             v_ry += 0.12
         v_rx, v_ry = v_rx / math.sqrt(v_rx**2 + v_ry**2) , v_ry / math.sqrt(v_rx**2 + v_ry**2)
-        #generate asteroid with (almost) random velocity a bit outside the surf (doesn't quite work, I see them spawning sometimes)
-        self.asteroids.append(Asteroid(dims[0]/2 + dims[0]*r_rx/math.sqrt(2), dims[1] / 2 + dims[1]*r_ry/math.sqrt(2), v_rx, v_ry, "large", random.choice([0, 1, 2])))
+        #generate asteroid with (almost) random velocity a bit outside the surf
+        self.asteroids.append(Asteroid(dims[0]/2 + r_rx * (dims[0]/math.sqrt(2) + 20) , dims[1] / 2 + r_ry * (dims[1]/math.sqrt(2) + 20), v_rx, v_ry, "large", random.choice([0, 1, 2])))
         self.l_aster += 1
         self.timer = pygame.time.get_ticks()
     #delete asteroids that won't enter the surf
