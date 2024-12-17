@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ec7efd1-176e-4acc-a568-31238368f26e" name="Changes" comment="Fixed a bug where one of the smaller asteroids got immediately destroyed">
+    <list default="true" id="0ec7efd1-176e-4acc-a568-31238368f26e" name="Changes" comment="Working Prototype">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -107,7 +107,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734347143888</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Working Prototype">
+      <option name="closed" value="true" />
+      <created>1734354317318</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1734354317318</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -126,6 +134,7 @@
     <MESSAGE value="2nd Commit" />
     <MESSAGE value="Refactored a bit and added bullet and asteroid collision" />
     <MESSAGE value="Fixed a bug where one of the smaller asteroids got immediately destroyed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug where one of the smaller asteroids got immediately destroyed" />
+    <MESSAGE value="Working Prototype" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working Prototype" />
   </component>
 </project>
