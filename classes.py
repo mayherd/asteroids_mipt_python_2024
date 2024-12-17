@@ -36,7 +36,7 @@ class MovingObject(RectangularObject):
 
 class Projectile(MovingObject):
     def __init__(self, x: float, y: float, v_x: float, v_y: float):
-        MovingObject.__init__(self, x, y, v_x, v_y, 3, 3, speed = 10)
+        MovingObject.__init__(self, x, y, v_x, v_y, 4, 4, speed = 10)
 
 
 
